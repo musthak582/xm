@@ -1,0 +1,248 @@
+Q1.1.
+CREATE DATABASE College;
+USE College;
+
+CREATE TABLE Lecturer (
+    LID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Address VARCHAR(255)
+);
+
+CREATE TABLE Student (
+    USN VARCHAR(20) PRIMARY KEY,
+    Name VARCHAR(100),
+    Address VARCHAR(255),
+    Phone VARCHAR(15),
+    Gender VARCHAR(10)
+);
+
+CREATE TABLE SemSec (
+    SSID INT PRIMARY KEY,
+    Sem INT,
+    Sec CHAR(1)
+);
+
+CREATE TABLE Class (
+    USN VARCHAR(20),
+    SSID INT,
+    PRIMARY KEY (USN, SSID),
+    FOREIGN KEY (USN) REFERENCES Student(USN) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (SSID) REFERENCES SemSec(SSID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Subject (
+    Subcode VARCHAR(20) PRIMARY KEY,
+    Title VARCHAR(100),
+    Sem INT,
+    Credits INT
+);
+
+CREATE TABLE Marks (
+    USN VARCHAR(20),
+    Subcode VARCHAR(20),
+    SSID INT,
+    Test1 INT,
+    Test2 INT,
+    Test3 INT,
+    Final INT,
+    PRIMARY KEY (USN, Subcode, SSID),
+    FOREIGN KEY (USN) REFERENCES Student(USN) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (Subcode) REFERENCES Subject(Subcode) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (SSID) REFERENCES SemSec(SSID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+LOAD DATA LOCAL INFILE '/path/pet.txt' INTO TABLE TableName
+ LINES TERMINATED BY '\r\n';
+
+CREATE TABLE Student (
+    USN VARCHAR(20) PRIMARY KEY,
+    Name VARCHAR(100)
+);
+
+CREATE TABLE Marks (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    USN VARCHAR(20),
+    Test1 INT,
+    FOREIGN KEY (USN) REFERENCES Student(USN) ON DELETE CASCADE
+);
+
+DELETE FROM Student WHERE USN = 'S1';
+
+CREATE TABLE Student (
+    USN VARCHAR(20) PRIMARY KEY,
+    Name VARCHAR(100)
+);
+
+CREATE TABLE Marks (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    USN VARCHAR(20),
+    Test1 INT,
+    FOREIGN KEY (USN) REFERENCES Student(USN) ON UPDATE CASCADE
+);
+
+UPDATE Student SET USN = 'S2' WHERE USN = 'S1';
+
+2.
+CREATE USER 'MA01'@'localhost' IDENTIFIED BY 'Pqr@&12';
+
+GRANT INSERT, UPDATE ON College.* TO 'MA01'@'localhost';
+
+FLUSH PRIVILEGES;
+
+USE College;
+
+INSERT INTO SemSec (SSID, Sem, Sec) VALUES 
+('CSE2B', 2, 'B'),
+('CSE2C', 2, 'C'),
+('CSE1A', 1, 'A'),
+('CSE1B', 1, 'B'),
+('CSE1C', 1, 'C');
+
+3.
+CREATE USER 'Staff01'@'localhost' IDENTIFIED BY 'Xyz@&12';
+
+GRANT UPDATE ON College.Marks TO 'Staff01'@'localhost';
+
+FLUSH PRIVILEGES;
+
+4.
+USE College;
+
+UPDATE Marks
+SET Final = (GREATEST(Test1, Test2, Test3) + 
+             LEAST(GREATEST(Test1, Test2), GREATEST(Test2, Test3), GREATEST(Test1, Test3))) / 2;
+
+REVOKE ALL PRIVILEGES ON College.* FROM 'Staff01'@'localhost';
+
+5.
+DROP USER 'Staff01'@'localhost';
+
+CREATE VIEW FourthSemC AS
+SELECT Student.*
+FROM Student
+JOIN Class ON Student.USN = Class.USN
+JOIN SemSec ON Class.SSID = SemSec.SSID
+WHERE SemSec.Sem = 4 AND SemSec.Sec = 'C';
+
+CREATE VIEW Test1Marks AS
+SELECT Subcode, Test1
+FROM Marks
+WHERE USN = '1BI15CS101';
+
+
+6.
+DROP VIEW IF EXISTS FourthSemC;
+DROP VIEW IF EXISTS Test1Marks;
+
+
+-------------------procedure-------------------
+1.
+DELIMITER $$
+
+CREATE PROCEDURE CountGenderPerSemesterAndSection()
+BEGIN
+    SELECT 
+        semester, 
+        section, 
+        SUM(CASE WHEN gender = 'Male' THEN 1 ELSE 0 END) AS MaleCount,
+        SUM(CASE WHEN gender = 'Female' THEN 1 ELSE 0 END) AS FemaleCount
+    FROM students
+    GROUP BY semester, section;
+END $$
+
+DELIMITER ;
+
+2.
+DELIMITER $$
+
+CREATE PROCEDURE InsertSubject(subcode VARCHAR(10), title VARCHAR(50), sem INT, credits INT)
+BEGIN
+    INSERT INTO Subject (Subcode, Title, Sem, Credits) 
+    VALUES (subcode, title, sem, credits);
+END $$
+
+DELIMITER ;
+
+-- Use the procedure to insert the given records
+CALL InsertSubject('10CS81', 'ACA', 8, 4);
+CALL InsertSubject('10CS82', 'SSM', 8, 4);
+
+3.
+DELIMITER $$
+
+CREATE TRIGGER CalculateFinal
+BEFORE INSERT ON Marks
+FOR EACH ROW
+BEGIN
+    SET NEW.Final = (NEW.Test1 + NEW.Test2 + NEW.Test3 - LEAST(NEW.Test1, NEW.Test2, NEW.Test3)) / 2;
+END $$
+
+DELIMITER ;
+
+-- Insert the given records
+INSERT INTO Marks (USN, Subcode, SSID, Test1, Test2, Test3) 
+VALUES ('1RN14CS032', '10CS81', 'CSE8C', 16, 17, 14);
+
+INSERT INTO Marks (USN, Subcode, SSID, Test1, Test2, Test3) 
+VALUES ('1RN14CS032', '10CS82', 'CSE8C', 11, 18, 13);
+
+4.
+-- Create the Old_Marks table
+CREATE TABLE Old_Marks AS SELECT * FROM Marks WHERE 1 = 0;
+
+DELIMITER $$
+
+CREATE TRIGGER MoveToOldMarks
+AFTER DELETE ON Marks
+FOR EACH ROW
+BEGIN
+    INSERT INTO Old_Marks (USN, Subcode, SSID, Test1, Test2, Test3, Final)
+    VALUES (OLD.USN, OLD.Subcode, OLD.SSID, OLD.Test1, OLD.Test2, OLD.Test3, OLD.Final);
+END $$
+
+DELIMITER ;
+
+-- Delete the given records
+DELETE FROM Marks WHERE USN = '1RN13CS091' AND Subcode = '10CS83';
+DELETE FROM Marks WHERE USN = '1RN13CS091' AND Subcode = '10CS85';
+
+
+5.
+DELIMITER $$
+
+CREATE TRIGGER CorrectCredits
+BEFORE INSERT ON Subject
+FOR EACH ROW
+BEGIN
+    IF NEW.Credits < 3 THEN
+        SET NEW.Credits = 3;
+    END IF;
+END $$
+
+DELIMITER ;
+
+-- Insert the given records
+INSERT INTO Subject (Subcode, Title, Sem, Credits) 
+VALUES ('10CS92', 'DBMS', 8, 1);
+
+INSERT INTO Subject (Subcode, Title, Sem, Credits) 
+VALUES ('10CS93', 'MySQL', 8, 4);
+
+INSERT INTO Subject (Subcode, Title, Sem, Credits) 
+VALUES ('10CS94', 'MySQL', 8, 2);
+
+
+6.1
+-- Back up the tables to a file
+BACKUP TABLE Lecturer, Student, Subject, Marks 
+TO '/path/to/backup/directory';
+
+6.2
+-- Step 1: Create a copy of the database structure
+CREATE DATABASE CollegeNew;
+
+-- Step 2: Export the structure of the original database
+mysqldump -u username -p --no-data College > CollegeStructure.sql
+
+-- Step 3: Restore the structure to the new database
+mysql -u username -p CollegeNew < CollegeStructure.sql

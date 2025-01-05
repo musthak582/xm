@@ -1,0 +1,60 @@
+tee d:/backup.txt;
+
+SHOW DATABASES;
+
+create database roshan;
+
+USE test
+
+SHOW TABLES;
+
+CREATE TABLE pet (name VARCHAR(20), owner VARCHAR(20), species VARCHAR(20), sex CHAR(1), birth DATE, death DATE);
+
+SHOW TABLES;
+
+DESCRIBE pet;
+
+LOAD DATA LOCAL INFILE '/path/pet.txt' INTO TABLE pet LINES TERMINATED BY '\r\n';
+
+INSERT INTO pet VALUES ('Puffball','Diane','hamster','f','1999-03-30',NULL);
+
+SELECT * FROM pet;
+
+UPDATE pet SET birth = '1989-08-31' WHERE name = 'Bowser';
+
+SELECT * FROM pet WHERE name = 'Bowser';
+
+SELECT * FROM pet WHERE species = 'dog' AND sex = 'f';
+
+SELECT name, birth FROM pet;
+
+SELECT name, birth FROM pet ORDER BY birth;
+
+SELECT name, species, birth FROM pet ORDER BY species, birth DESC;
+
+SELECT name, birth, CURDATE(), TIMESTAMPDIFF(YEAR,birth,CURDATE()) AS age FROM pet;
+
+SELECT * FROM pet WHERE name LIKE 'b%';
+
+SELECT * FROM pet WHERE name LIKE '%fy';
+
+SELECT COUNT(*) FROM pet;
+
+SELECT owner, COUNT(*) FROM pet GROUP BY owner;
+
+SELECT species, sex, COUNT(*) FROM pet WHERE species = 'dog' OR species = 'cat' GROUP BY species, sex;
+
+create table transactions (name varchar(50), tid int primary key, customer_id int,foreign key(customer_id) references customers(customer_id));
+
+alter table students add column subjectid int;
+
+alter table students add constraint adding_fk foreign key (subjectid) references subjects (subid);
+
+alter table patient modify column pid varchar(20);
+
+RENAME TABLE old_table TO new_table;
+
+UPDATE table_name SET column1 = value1 WHERE condition;
+
+SELECT * FROM shop WHERE  price=(SELECT MAX(price) FROM shop);
+
