@@ -105,7 +105,18 @@ LINES TERMINATED BY '\n';
 ii) CREATE DATABASE CollegeNew;
 USE CollegeNew;
 
-
+Create a New User
+CREATE USER 'newuser'@'localhost' IDENTIFIED BY 'password';
+Review a user’s current permissions
+SHOW GRANTS username;
+Grant Permission Syntax
+GRANT type_of_permission ON database_name.table_name TO
+‘username’@'localhost’;
+Revoke Permission Syntax
+REVOKE type_of_permission ON database_name.table_name FROM
+‘username’@‘localhost’;
+DROP to delete a user
+DROP USER ‘username’@‘localhost’;
 
 
 
