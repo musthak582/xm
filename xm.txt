@@ -1,139 +1,185 @@
 /=============PlayfairCipher==========/
 
-import java.util.*;
 
-public class PlayfairCipher {
+//**********PlayfairCipherClient.java********//
+import java.io.*;
+import java.net.*;
+import java.util.Scanner;
 
-    private static final int MATRIX_SIZE = 5;
-    private static char[][] matrix = new char[MATRIX_SIZE][MATRIX_SIZE];
-    private static String keyword;
+public class PlayfairCipherClient {
 
     public static void main(String[] args) {
-        try (Scanner scanner = new Scanner(System.in)) {
-            // Get the keyword
+        try (Socket socket = new Socket("localhost", 12345);
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                Scanner scanner = new Scanner(System.in)) {
+
+            // Send the keyword
             System.out.println("Enter the keyword:");
-            keyword = scanner.nextLine().toUpperCase().replaceAll("[^A-Z]", "").replace('J', 'I');
-            
-            // Construct the matrix
-            constructMatrix();
-            displayMatrix();
-            
-            // Get plaintext input
+            String keyword = scanner.nextLine();
+            out.println(keyword);
+
+            // Display the 5x5 matrix received from the server (if needed)
+            System.out.println("5x5 Matrix:");
+            for (int i = 0; i < 5; i++) {
+                System.out.println(in.readLine());
+            }
+
+            // Send plaintext for encryption
             System.out.println("Enter plaintext for encryption:");
-            String plaintext = scanner.nextLine().toUpperCase().replaceAll("[^A-Z]", "").replace('J', 'I');
-            
-            // Ensure the length is even by adding 'Z' if needed
-            if (plaintext.length() % 2 != 0) {
-                plaintext += "Z";
-            }
-            
-            // Encrypt the plaintext
-            String ciphertext = encrypt(plaintext);
+            String plaintext = scanner.nextLine();
+            out.println(plaintext);
+
+            // Receive and display ciphertext and decrypted text
+            String ciphertext = in.readLine();
             System.out.println("Encrypted text: " + ciphertext);
-            
-            // Decrypt the ciphertext
-            String decryptedText = decrypt(ciphertext);
+
+            String decryptedText = in.readLine();
             System.out.println("Decrypted text: " + decryptedText);
-        } // The scanner is automatically closed here
-    }
-
-    // Construct the 5x5 matrix
-    private static void constructMatrix() {
-        boolean[] used = new boolean[26];
-        int index = 0;
-        
-        // Fill in the matrix with the keyword
-        for (char c : keyword.toCharArray()) {
-            if (!used[c - 'A']) {
-                matrix[index / MATRIX_SIZE][index % MATRIX_SIZE] = c;
-                used[c - 'A'] = true;
-                index++;
-            }
-        }
-        
-        // Fill in the remaining letters
-        for (char c = 'A'; c <= 'Z'; c++) {
-            if (c == 'J') continue; // Skip 'J' since 'I' and 'J' are the same
-            if (!used[c - 'A']) {
-                matrix[index / MATRIX_SIZE][index % MATRIX_SIZE] = c;
-                used[c - 'A'] = true;
-                index++;
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+}
 
-    // Display the 5x5 matrix
-    private static void displayMatrix() {
-        System.out.println("5x5 Matrix:");
+//**********PlayfairCipherServer.java********//
+import java.io.*;
+import java.net.*;
+
+public class PlayfairCipherServer {
+
+  private static final int MATRIX_SIZE = 5;
+  private static char[][] matrix = new char[MATRIX_SIZE][MATRIX_SIZE];
+  private static String keyword;
+
+  public static void main(String[] args) {
+    try (ServerSocket serverSocket = new ServerSocket(12345)) {
+      System.out.println("Server started. Waiting for client...");
+      try (Socket socket = serverSocket.accept();
+          BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+          PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+
+        System.out.println("Client connected.");
+
+        // Receive the keyword
+        keyword = in.readLine().toUpperCase().replaceAll("[^A-Z]", "").replace('J', 'I');
+        constructMatrix();
+
+        // Send the matrix to the client
         for (int i = 0; i < MATRIX_SIZE; i++) {
-            for (int j = 0; j < MATRIX_SIZE; j++) {
-                System.out.print(matrix[i][j] + " ");
-            }
-            System.out.println();
+          StringBuilder row = new StringBuilder();
+          for (int j = 0; j < MATRIX_SIZE; j++) {
+            row.append(matrix[i][j]).append(" ");
+          }
+          out.println(row.toString().trim());
         }
+
+        // Receive plaintext for encryption
+        String plaintext = in.readLine().toUpperCase().replaceAll("[^A-Z]", "").replace('J', 'I');
+        if (plaintext.length() % 2 != 0) {
+          plaintext += "Z";
+        }
+
+        // Encrypt and send back ciphertext
+        String ciphertext = encrypt(plaintext);
+        out.println(ciphertext);
+
+        // Decrypt and send back plaintext
+        String decryptedText = decrypt(ciphertext);
+        out.println(decryptedText);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  // Construct the 5x5 matrix
+  private static void constructMatrix() {
+    boolean[] used = new boolean[26];
+    int index = 0;
+
+    // Fill in the matrix with the keyword
+    for (char c : keyword.toCharArray()) {
+      if (!used[c - 'A']) {
+        matrix[index / MATRIX_SIZE][index % MATRIX_SIZE] = c;
+        used[c - 'A'] = true;
+        index++;
+      }
     }
 
-    // Encrypt the plaintext
-    private static String encrypt(String plaintext) {
-        StringBuilder ciphertext = new StringBuilder();
-        
-        for (int i = 0; i < plaintext.length(); i += 2) {
-            char a = plaintext.charAt(i);
-            char b = plaintext.charAt(i + 1);
-            int[] posA = findPosition(a);
-            int[] posB = findPosition(b);
-            
-            if (posA[0] == posB[0]) { // Same row
-                ciphertext.append(matrix[posA[0]][(posA[1] + MATRIX_SIZE - 1) % MATRIX_SIZE]);
-                ciphertext.append(matrix[posB[0]][(posB[1] + MATRIX_SIZE - 1) % MATRIX_SIZE]);
-            } else if (posA[1] == posB[1]) { // Same column
-                ciphertext.append(matrix[(posA[0] + MATRIX_SIZE - 1) % MATRIX_SIZE][posA[1]]);
-                ciphertext.append(matrix[(posB[0] + MATRIX_SIZE - 1) % MATRIX_SIZE][posB[1]]);
-            } else { // Rectangle
-                ciphertext.append(matrix[posA[0]][posB[1]]);
-                ciphertext.append(matrix[posB[0]][posA[1]]);
-            }
-        }
-        
-        return ciphertext.toString();
+    // Fill in the remaining letters
+    for (char c = 'A'; c <= 'Z'; c++) {
+      if (c == 'J')
+        continue; // Skip 'J' since 'I' and 'J' are the same
+      if (!used[c - 'A']) {
+        matrix[index / MATRIX_SIZE][index % MATRIX_SIZE] = c;
+        used[c - 'A'] = true;
+        index++;
+      }
+    }
+  }
+
+  // Encrypt the plaintext
+  private static String encrypt(String plaintext) {
+    StringBuilder ciphertext = new StringBuilder();
+
+    for (int i = 0; i < plaintext.length(); i += 2) {
+      char a = plaintext.charAt(i);
+      char b = plaintext.charAt(i + 1);
+      int[] posA = findPosition(a);
+      int[] posB = findPosition(b);
+
+      if (posA[0] == posB[0]) { // Same row
+        ciphertext.append(matrix[posA[0]][(posA[1] + MATRIX_SIZE - 1) % MATRIX_SIZE]);
+        ciphertext.append(matrix[posB[0]][(posB[1] + MATRIX_SIZE - 1) % MATRIX_SIZE]);
+      } else if (posA[1] == posB[1]) { // Same column
+        ciphertext.append(matrix[(posA[0] + MATRIX_SIZE - 1) % MATRIX_SIZE][posA[1]]);
+        ciphertext.append(matrix[(posB[0] + MATRIX_SIZE - 1) % MATRIX_SIZE][posB[1]]);
+      } else { // Rectangle
+        ciphertext.append(matrix[posA[0]][posB[1]]);
+        ciphertext.append(matrix[posB[0]][posA[1]]);
+      }
     }
 
-    // Decrypt the ciphertext
-    private static String decrypt(String ciphertext) {
-        StringBuilder plaintext = new StringBuilder();
-        
-        for (int i = 0; i < ciphertext.length(); i += 2) {
-            char a = ciphertext.charAt(i);
-            char b = ciphertext.charAt(i + 1);
-            int[] posA = findPosition(a);
-            int[] posB = findPosition(b);
-            
-            if (posA[0] == posB[0]) { // Same row
-                plaintext.append(matrix[posA[0]][(posA[1] + 1) % MATRIX_SIZE]);
-                plaintext.append(matrix[posB[0]][(posB[1] + 1) % MATRIX_SIZE]);
-            } else if (posA[1] == posB[1]) { // Same column
-                plaintext.append(matrix[(posA[0] + 1) % MATRIX_SIZE][posA[1]]);
-                plaintext.append(matrix[(posB[0] + 1) % MATRIX_SIZE][posB[1]]);
-            } else { // Rectangle
-                plaintext.append(matrix[posA[0]][posB[1]]);
-                plaintext.append(matrix[posB[0]][posA[1]]);
-            }
-        }
-        
-        return plaintext.toString();
+    return ciphertext.toString();
+  }
+
+  // Decrypt the ciphertext
+  private static String decrypt(String ciphertext) {
+    StringBuilder plaintext = new StringBuilder();
+
+    for (int i = 0; i < ciphertext.length(); i += 2) {
+      char a = ciphertext.charAt(i);
+      char b = ciphertext.charAt(i + 1);
+      int[] posA = findPosition(a);
+      int[] posB = findPosition(b);
+
+      if (posA[0] == posB[0]) { // Same row
+        plaintext.append(matrix[posA[0]][(posA[1] + 1) % MATRIX_SIZE]);
+        plaintext.append(matrix[posB[0]][(posB[1] + 1) % MATRIX_SIZE]);
+      } else if (posA[1] == posB[1]) { // Same column
+        plaintext.append(matrix[(posA[0] + 1) % MATRIX_SIZE][posA[1]]);
+        plaintext.append(matrix[(posB[0] + 1) % MATRIX_SIZE][posB[1]]);
+      } else { // Rectangle
+        plaintext.append(matrix[posA[0]][posB[1]]);
+        plaintext.append(matrix[posB[0]][posA[1]]);
+      }
     }
 
-    // Find the position of a letter in the matrix
-    private static int[] findPosition(char c) {
-        for (int i = 0; i < MATRIX_SIZE; i++) {
-            for (int j = 0; j < MATRIX_SIZE; j++) {
-                if (matrix[i][j] == c) {
-                    return new int[]{i, j};
-                }
-            }
+    return plaintext.toString();
+  }
+
+  // Find the position of a letter in the matrix
+  private static int[] findPosition(char c) {
+    for (int i = 0; i < MATRIX_SIZE; i++) {
+      for (int j = 0; j < MATRIX_SIZE; j++) {
+        if (matrix[i][j] == c) {
+          return new int[] { i, j };
         }
-        return null; // Should never happen
+      }
     }
+    return null; // Should never happen
+  }
 }
 
 
@@ -143,77 +189,136 @@ public class PlayfairCipher {
 
 
 //=====================RSA Answer for CA2 question================/
+//**********RSA_Client.java********//
+import java.io.*;
+import java.net.*;
+import java.util.Scanner;
 
+public class RSA_Client {
+    public static void main(String[] args) {
+        String serverAddress = "localhost";
+        int port = 1234;
+
+        try (Socket socket = new Socket(serverAddress, port);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             Scanner scanner = new Scanner(System.in)) {
+
+            System.out.println("Connected to the RSA server.");
+
+            // Read message to encrypt
+            System.out.print("Enter message to encrypt: ");
+            String message = scanner.nextLine();
+
+            // Send message to server
+            out.println(message);
+
+            // Receive encrypted and decrypted responses
+            String encrypted = in.readLine();
+            String decrypted = in.readLine();
+
+            System.out.println(encrypted);
+			
+            System.out.println(decrypted);
+
+        } catch (IOException e) {
+            System.err.println("Client error: " + e.getMessage());
+        }
+    }
+}
+
+
+//**********RSA_Server.java********//
+import java.io.*;
 import java.math.BigInteger;
+import java.net.*;
 import java.security.SecureRandom;
 
-public class RSA {
+public class RSA_Server {
+    private static BigInteger p, q, n, phi, e, d;
+    private static final int BIT_LENGTH = 512; // Increase bit length for stronger encryption
+    private static final SecureRandom random = new SecureRandom();
+	
+	 // Convert a message string to a BigInteger
+    private static BigInteger msgToNumber(String message) {
+        return new BigInteger(message.getBytes());
+    }
+	
+	// Select a random prime number between 1 and 100
+    private static BigInteger selectPrime() {
+       return new BigInteger(BIT_LENGTH / 2, 100, random);
+    }
 
-    private BigInteger p, q, n, phi, e, d;
-    private int bitlength = 1024;
-    private SecureRandom random;
+	private static BigInteger gcd(BigInteger x, BigInteger y) {
+        while (!y.equals(BigInteger.ZERO)) {
+            BigInteger temp = y;
+            y = x.mod(y);
+            x = temp;
+        }
+        return x;
+    }
+	 private static BigInteger generatePublicKey(BigInteger phi) {
+        BigInteger e = BigInteger.valueOf(3); // Start with a small public exponent
+        while (!gcd(phi, e).equals(BigInteger.ONE)) { // Check if e is coprime with phi
+            e = e.add(BigInteger.TWO); // Increment by 2 to ensure odd numbers
+        }
+        return e;
+    }
+	 // Generate the private key (d) using the modular inverse of e
+    private static BigInteger generatePrivateKey(BigInteger e, BigInteger phi) {
+        return e.modInverse(phi);
+    }
 
-    public RSA() {
-        random = new SecureRandom();
-        p = BigInteger.probablePrime(bitlength / 2, random);
-        q = BigInteger.probablePrime(bitlength / 2, random);
+    // Key generation
+    private static void generateKeys() {
+        p = selectPrime();
+        q = selectPrime();
         n = p.multiply(q);
         phi = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
-        e = BigInteger.probablePrime(bitlength / 2, random);
-        while (phi.gcd(e).compareTo(BigInteger.ONE) > 0 && e.compareTo(phi) < 0) {
-            e = e.add(BigInteger.ONE);
-        }
-        d = e.modInverse(phi);
+        e = generatePublicKey(phi);
+        d = generatePrivateKey(e, phi);
     }
 
-    // Convert message to number with padding
-    public String msgToNumber(String message) {
-        StringBuilder numberMessage = new StringBuilder();
-        for (char ch : message.toCharArray()) {
-            // Pad each ASCII value to 3 digits
-            numberMessage.append(String.format("%03d", (int) ch));
-        }
-        return numberMessage.toString();
+    public static String encrypt(String message) {
+        BigInteger msgNumber = msgToNumber(message);
+        return msgNumber.modPow(e, n).toString();
     }
 
-    // Encrypt the message
-    public BigInteger encrypt(String message) {
-        String numericMessage = msgToNumber(message);
-        return new BigInteger(numericMessage).modPow(e, n);
-    }
-
-    // Decrypt the message
-    public String decrypt(BigInteger encryptedMessage) {
-        BigInteger decryptedMessage = encryptedMessage.modPow(d, n);
-        String decryptedNumberString = decryptedMessage.toString();
-
-        // Check if the length of the decrypted numeric string is a multiple of 3
-        if (decryptedNumberString.length() % 3 != 0) {
-            // Pad the string with leading zeros to make it divisible by 3
-            int paddingLength = 3 - (decryptedNumberString.length() % 3);
-            decryptedNumberString = "0".repeat(paddingLength) + decryptedNumberString;
-        }
-
-        // Convert the decrypted numeric string back to characters
-        StringBuilder decryptedString = new StringBuilder();
-        for (int i = 0; i < decryptedNumberString.length(); i += 3) {
-            int charCode = Integer.parseInt(decryptedNumberString.substring(i, i + 3));
-            decryptedString.append((char) charCode);
-        }
-        return decryptedString.toString();
+    public static String decrypt(String encryptedMessage) {
+        BigInteger encryptedNumber = new BigInteger(encryptedMessage);
+        BigInteger decryptedNumber = encryptedNumber.modPow(d, n);
+        return new String(decryptedNumber.toByteArray());
     }
 
     public static void main(String[] args) {
-        RSA rsa = new RSA();
+        int port = 1234;
 
-        String originalMessage = "Hello, world";
-        System.out.println("Original Message: " + originalMessage);
+        generateKeys();
+        System.out.println("RSA Server started. Waiting for client connection...");
 
-        BigInteger encryptedMessage = rsa.encrypt(originalMessage);
-        System.out.println("Encrypted Message: " + encryptedMessage);
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            while (true) {
+                try (Socket clientSocket = serverSocket.accept();
+                     BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                     PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
 
-        String decryptedMessage = rsa.decrypt(encryptedMessage);
-        System.out.println("Decrypted Message: " + decryptedMessage);
+                    System.out.println("Client connected.");
+
+                    // Read message from client
+                    String message = in.readLine();
+                    System.out.println("Received message: " + message);
+
+                    // Encrypt and decrypt the message
+                    String encrypted = encrypt(message);
+                    String decrypted = decrypt(encrypted);
+
+                    out.println("Encrypted: " + encrypted);
+                    out.println("Decrypted: " + decrypted);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Server error: " + e.getMessage());
+        }
     }
 }
 
@@ -221,7 +326,11 @@ public class RSA {
 
 
 
-/=============RSA_Server==========/
+
+/=============RSA Implementaion LMS==========/
+
+
+//**********RSA_Server.java********//
 
 import java.io.*;
 import java.math.BigInteger;
@@ -279,7 +388,8 @@ public class RSA_Server {
 
 
 
-/=============RSA_Client==========/
+
+//**********RSA_Client.java********//
 
 import java.io.*;
 import java.math.BigInteger;
@@ -325,7 +435,11 @@ public class RSA_Client {
 
 
 
-/=============CaesarCipherServer==========/
+/=============CaesarCipher Implementaion LMS==========/
+
+
+
+//**********CaesarCipherServer.java********//
 import java.io.*;
 import java.net.*;
 
@@ -389,7 +503,10 @@ public class CaesarCipherServer {
 }
 
 
-/=============CaesarCipherClient==========/
+
+
+
+//**********CaesarCipherClient.java********//
 
 import java.io.*;
 import java.net.*;
