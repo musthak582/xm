@@ -1,285 +1,693 @@
-/=============PlayfairCipher==========/
+# Complete MIPS Assembly Solutions for CS3211 Problem Sheet
 
+## Q1: Quadratic Expression Evaluation
 
-//**********PlayfairCipherClient.java********//
-import java.io.*;
-import java.net.*;
-import java.util.Scanner;
+```mips
+.data
+prompt_x: .asciiz "Enter a value for x: "
+result_msg: .asciiz "The result is: "
+newline: .asciiz "\n"
 
-public class PlayfairCipherClient {
+.text
+main:
+    # Prompt for x
+    li $v0, 4
+    la $a0, prompt_x
+    syscall
+    
+    # Read integer x
+    li $v0, 5
+    syscall
+    move $t0, $v0       # $t0 = x
+    
+    # Calculate 5x^2 + 2x + 3
+    mul $t1, $t0, $t0   # x^2
+    li $t2, 5
+    mul $t1, $t1, $t2   # 5x^2
+    
+    li $t2, 2
+    mul $t3, $t0, $t2   # 2x
+    
+    add $t1, $t1, $t3   # 5x^2 + 2x
+    addi $t1, $t1, 3    # 5x^2 + 2x + 3
+    
+    # Print result
+    li $v0, 4
+    la $a0, result_msg
+    syscall
+    
+    li $v0, 1
+    move $a0, $t1
+    syscall
+    
+    li $v0, 4
+    la $a0, newline
+    syscall
+    
+    # Exit
+    li $v0, 10
+    syscall
+```
 
-    public static void main(String[] args) {
-        try (Socket socket = new Socket("localhost", 12345);
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                Scanner scanner = new Scanner(System.in)) {
+## Q2: Expression Evaluations
 
-            // Send the keyword
-            System.out.println("Enter the keyword:");
-            String keyword = scanner.nextLine();
-            out.println(keyword);
+### 2a) 5x + 3y + z
 
-            // Display the 5x5 matrix received from the server (if needed)
-            System.out.println("5x5 Matrix:");
-            for (int i = 0; i < 5; i++) {
-                System.out.println(in.readLine());
-            }
+```mips
+.data
+prompt_x: .asciiz "Enter x: "
+prompt_y: .asciiz "Enter y: "
+prompt_z: .asciiz "Enter z: "
+result_msg: .asciiz "5x + 3y + z = "
+newline: .asciiz "\n"
 
-            // Send plaintext for encryption
-            System.out.println("Enter plaintext for encryption:");
-            String plaintext = scanner.nextLine();
-            out.println(plaintext);
+.text
+main:
+    # Read x
+    li $v0, 4
+    la $a0, prompt_x
+    syscall
+    li $v0, 5
+    syscall
+    move $t0, $v0
+    
+    # Read y
+    li $v0, 4
+    la $a0, prompt_y
+    syscall
+    li $v0, 5
+    syscall
+    move $t1, $v0
+    
+    # Read z
+    li $v0, 4
+    la $a0, prompt_z
+    syscall
+    li $v0, 5
+    syscall
+    move $t2, $v0
+    
+    # Calculate 5x + 3y + z
+    li $t3, 5
+    mul $t0, $t0, $t3   # 5x
+    
+    li $t3, 3
+    mul $t1, $t1, $t3   # 3y
+    
+    add $t0, $t0, $t1   # 5x + 3y
+    add $t0, $t0, $t2   # 5x + 3y + z
+    
+    # Print result
+    li $v0, 4
+    la $a0, result_msg
+    syscall
+    
+    li $v0, 1
+    move $a0, $t0
+    syscall
+    
+    li $v0, 4
+    la $a0, newline
+    syscall
+    
+    # Exit
+    li $v0, 10
+    syscall
+```
 
-            // Receive and display ciphertext and decrypted text
-            String ciphertext = in.readLine();
-            System.out.println("Encrypted text: " + ciphertext);
+### 2b) ((5x + 3y + z)/2) * 3
 
-            String decryptedText = in.readLine();
-            System.out.println("Decrypted text: " + decryptedText);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-}
+```mips
+.data
+prompt_x: .asciiz "Enter x: "
+prompt_y: .asciiz "Enter y: "
+prompt_z: .asciiz "Enter z: "
+result_msg: .asciiz "((5x + 3y + z)/2) * 3 = "
+newline: .asciiz "\n"
 
-//**********PlayfairCipherServer.java********//
-import java.io.*;
-import java.net.*;
+.text
+main:
+    # Read x, y, z (same as 2a)
+    li $v0, 4
+    la $a0, prompt_x
+    syscall
+    li $v0, 5
+    syscall
+    move $t0, $v0
+    
+    li $v0, 4
+    la $a0, prompt_y
+    syscall
+    li $v0, 5
+    syscall
+    move $t1, $v0
+    
+    li $v0, 4
+    la $a0, prompt_z
+    syscall
+    li $v0, 5
+    syscall
+    move $t2, $v0
+    
+    # Calculate 5x + 3y + z
+    li $t3, 5
+    mul $t0, $t0, $t3
+    li $t3, 3
+    mul $t1, $t1, $t3
+    add $t0, $t0, $t1
+    add $t0, $t0, $t2
+    
+    # Divide by 2 and multiply by 3
+    li $t3, 2
+    div $t0, $t3
+    mflo $t0
+    li $t3, 3
+    mul $t0, $t0, $t3
+    
+    # Print result
+    li $v0, 4
+    la $a0, result_msg
+    syscall
+    
+    li $v0, 1
+    move $a0, $t0
+    syscall
+    
+    li $v0, 4
+    la $a0, newline
+    syscall
+    
+    # Exit
+    li $v0, 10
+    syscall
+```
 
-public class PlayfairCipherServer {
+### 2c) x³ + 2x² + 3x + 4
 
-  private static final int MATRIX_SIZE = 5;
-  private static char[][] matrix = new char[MATRIX_SIZE][MATRIX_SIZE];
-  private static String keyword;
+```mips
+.data
+prompt_x: .asciiz "Enter x: "
+result_msg: .asciiz "x^3 + 2x^2 + 3x + 4 = "
+newline: .asciiz "\n"
 
-  public static void main(String[] args) {
-    try (ServerSocket serverSocket = new ServerSocket(12345)) {
-      System.out.println("Server started. Waiting for client...");
-      try (Socket socket = serverSocket.accept();
-          BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-          PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+.text
+main:
+    # Read x
+    li $v0, 4
+    la $a0, prompt_x
+    syscall
+    li $v0, 5
+    syscall
+    move $t0, $v0
+    
+    # Calculate x^3 + 2x^2 + 3x + 4
+    move $t1, $t0       # x
+    mul $t2, $t0, $t0   # x^2
+    mul $t3, $t2, $t0   # x^3
+    
+    li $t4, 2
+    mul $t5, $t2, $t4   # 2x^2
+    
+    li $t4, 3
+    mul $t6, $t1, $t4   # 3x
+    
+    add $t3, $t3, $t5   # x^3 + 2x^2
+    add $t3, $t3, $t6   # x^3 + 2x^2 + 3x
+    addi $t3, $t3, 4    # x^3 + 2x^2 + 3x + 4
+    
+    # Print result
+    li $v0, 4
+    la $a0, result_msg
+    syscall
+    
+    li $v0, 1
+    move $a0, $t3
+    syscall
+    
+    li $v0, 4
+    la $a0, newline
+    syscall
+    
+    # Exit
+    li $v0, 10
+    syscall
+```
 
-        System.out.println("Client connected.");
+### 2d) (4x/3) * y
 
-        // Receive the keyword
-        keyword = in.readLine().toUpperCase().replaceAll("[^A-Z]", "").replace('J', 'I');
-        constructMatrix();
+```mips
+.data
+prompt_x: .asciiz "Enter x: "
+prompt_y: .asciiz "Enter y: "
+result_msg: .asciiz "(4x/3) * y = "
+newline: .asciiz "\n"
 
-        // Send the matrix to the client
-        for (int i = 0; i < MATRIX_SIZE; i++) {
-          StringBuilder row = new StringBuilder();
-          for (int j = 0; j < MATRIX_SIZE; j++) {
-            row.append(matrix[i][j]).append(" ");
-          }
-          out.println(row.toString().trim());
-        }
+.text
+main:
+    # Read x
+    li $v0, 4
+    la $a0, prompt_x
+    syscall
+    li $v0, 5
+    syscall
+    move $t0, $v0
+    
+    # Read y
+    li $v0, 4
+    la $a0, prompt_y
+    syscall
+    li $v0, 5
+    syscall
+    move $t1, $v0
+    
+    # Calculate (4x/3) * y
+    li $t2, 4
+    mul $t0, $t0, $t2   # 4x
+    li $t2, 3
+    div $t0, $t2        # 4x / 3
+    mflo $t0
+    mul $t0, $t0, $t1   # (4x/3) * y
+    
+    # Print result
+    li $v0, 4
+    la $a0, result_msg
+    syscall
+    
+    li $v0, 1
+    move $a0, $t0
+    syscall
+    
+    li $v0, 4
+    la $a0, newline
+    syscall
+    
+    # Exit
+    li $v0, 10
+    syscall
+```
 
-        // Receive plaintext for encryption
-        String plaintext = in.readLine().toUpperCase().replaceAll("[^A-Z]", "").replace('J', 'I');
-        if (plaintext.length() % 2 != 0) {
-          plaintext += "Z";
-        }
+## Q3: Implementing `rem` Operator
 
-        // Encrypt and send back ciphertext
-        String ciphertext = encrypt(plaintext);
-        out.println(ciphertext);
+```mips
+# Function to implement rem operator (a % b)
+# Inputs: $a0 = a, $a1 = b
+# Output: $v0 = a % b
+rem_operator:
+    div $a0, $a1        # a / b
+    mfhi $v0            # remainder in hi register
+    jr $ra              # return
+```
 
-        // Decrypt and send back plaintext
-        String decryptedText = decrypt(ciphertext);
-        out.println(decryptedText);
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
+## Q4: addiu vs ori Analysis
 
-  // Construct the 5x5 matrix
-  private static void constructMatrix() {
-    boolean[] used = new boolean[26];
-    int index = 0;
+```mips
+.text
+main:
+    addiu $t0, $zero, 60000  # Sign-extended immediate
+    ori $t0, $zero, 60000    # Zero-extended immediate
+    
+    # Both will store 60000 in $t0 correctly
+    # Differences:
+    # 1. addiu sign-extends the immediate, ori zero-extends
+    # 2. For values that fit in 16 bits, both work the same
+    # 3. Performance is identical on most MIPS implementations
+    
+    # Exit
+    li $v0, 10
+    syscall
+```
 
-    // Fill in the matrix with the keyword
-    for (char c : keyword.toCharArray()) {
-      if (!used[c - 'A']) {
-        matrix[index / MATRIX_SIZE][index % MATRIX_SIZE] = c;
-        used[c - 'A'] = true;
-        index++;
-      }
-    }
+## Q5: Sum and Difference
 
-    // Fill in the remaining letters
-    for (char c = 'A'; c <= 'Z'; c++) {
-      if (c == 'J')
-        continue; // Skip 'J' since 'I' and 'J' are the same
-      if (!used[c - 'A']) {
-        matrix[index / MATRIX_SIZE][index % MATRIX_SIZE] = c;
-        used[c - 'A'] = true;
-        index++;
-      }
-    }
-  }
+```mips
+.data
+prompt1: .asciiz "Enter first number: "
+prompt2: .asciiz "Enter second number: "
+sum_msg: .asciiz "Sum = "
+diff_msg: .asciiz "Difference = "
+newline: .asciiz "\n"
 
-  // Encrypt the plaintext
-  private static String encrypt(String plaintext) {
-    StringBuilder ciphertext = new StringBuilder();
+.text
+main:
+    # Read first number
+    li $v0, 4
+    la $a0, prompt1
+    syscall
+    li $v0, 5
+    syscall
+    move $t0, $v0
+    
+    # Read second number
+    li $v0, 4
+    la $a0, prompt2
+    syscall
+    li $v0, 5
+    syscall
+    move $t1, $v0
+    
+    # Calculate sum and difference
+    add $t2, $t0, $t1   # sum
+    sub $t3, $t0, $t1   # difference
+    
+    # Print sum
+    li $v0, 4
+    la $a0, sum_msg
+    syscall
+    li $v0, 1
+    move $a0, $t2
+    syscall
+    li $v0, 4
+    la $a0, newline
+    syscall
+    
+    # Print difference
+    li $v0, 4
+    la $a0, diff_msg
+    syscall
+    li $v0, 1
+    move $a0, $t3
+    syscall
+    li $v0, 4
+    la $a0, newline
+    syscall
+    
+    # Exit
+    li $v0, 10
+    syscall
+```
 
-    for (int i = 0; i < plaintext.length(); i += 2) {
-      char a = plaintext.charAt(i);
-      char b = plaintext.charAt(i + 1);
-      int[] posA = findPosition(a);
-      int[] posB = findPosition(b);
+## Q6: Multiplication, Quotient and Remainder
 
-      if (posA[0] == posB[0]) { // Same row
-        ciphertext.append(matrix[posA[0]][(posA[1] + MATRIX_SIZE - 1) % MATRIX_SIZE]);
-        ciphertext.append(matrix[posB[0]][(posB[1] + MATRIX_SIZE - 1) % MATRIX_SIZE]);
-      } else if (posA[1] == posB[1]) { // Same column
-        ciphertext.append(matrix[(posA[0] + MATRIX_SIZE - 1) % MATRIX_SIZE][posA[1]]);
-        ciphertext.append(matrix[(posB[0] + MATRIX_SIZE - 1) % MATRIX_SIZE][posB[1]]);
-      } else { // Rectangle
-        ciphertext.append(matrix[posA[0]][posB[1]]);
-        ciphertext.append(matrix[posB[0]][posA[1]]);
-      }
-    }
+```mips
+.data
+prompt1: .asciiz "Enter first number: "
+prompt2: .asciiz "Enter second number: "
+mul_msg: .asciiz "Multiplication = "
+quot_msg: .asciiz "Quotient = "
+rem_msg: .asciiz "Remainder = "
+newline: .asciiz "\n"
 
-    return ciphertext.toString();
-  }
+.text
+main:
+    # Read numbers
+    li $v0, 4
+    la $a0, prompt1
+    syscall
+    li $v0, 5
+    syscall
+    move $t0, $v0
+    
+    li $v0, 4
+    la $a0, prompt2
+    syscall
+    li $v0, 5
+    syscall
+    move $t1, $v0
+    
+    # Multiplication
+    mul $t2, $t0, $t1
+    
+    # Division (quotient and remainder)
+    div $t0, $t1
+    mflo $t3        # quotient
+    mfhi $t4        # remainder
+    
+    # Print results
+    li $v0, 4
+    la $a0, mul_msg
+    syscall
+    li $v0, 1
+    move $a0, $t2
+    syscall
+    li $v0, 4
+    la $a0, newline
+    syscall
+    
+    li $v0, 4
+    la $a0, quot_msg
+    syscall
+    li $v0, 1
+    move $a0, $t3
+    syscall
+    li $v0, 4
+    la $a0, newline
+    syscall
+    
+    li $v0, 4
+    la $a0, rem_msg
+    syscall
+    li $v0, 1
+    move $a0, $t4
+    syscall
+    li $v0, 4
+    la $a0, newline
+    syscall
+    
+    # Exit
+    li $v0, 10
+    syscall
+```
 
-  // Decrypt the ciphertext
-  private static String decrypt(String ciphertext) {
-    StringBuilder plaintext = new StringBuilder();
+## Q7: Rectangle Area and Perimeter
 
-    for (int i = 0; i < ciphertext.length(); i += 2) {
-      char a = ciphertext.charAt(i);
-      char b = ciphertext.charAt(i + 1);
-      int[] posA = findPosition(a);
-      int[] posB = findPosition(b);
+```mips
+.data
+width_prompt: .asciiz "Enter width: "
+height_prompt: .asciiz "Enter height: "
+area_msg: .asciiz "Area = "
+perimeter_msg: .asciiz "Perimeter = "
+newline: .asciiz "\n"
 
-      if (posA[0] == posB[0]) { // Same row
-        plaintext.append(matrix[posA[0]][(posA[1] + 1) % MATRIX_SIZE]);
-        plaintext.append(matrix[posB[0]][(posB[1] + 1) % MATRIX_SIZE]);
-      } else if (posA[1] == posB[1]) { // Same column
-        plaintext.append(matrix[(posA[0] + 1) % MATRIX_SIZE][posA[1]]);
-        plaintext.append(matrix[(posB[0] + 1) % MATRIX_SIZE][posB[1]]);
-      } else { // Rectangle
-        plaintext.append(matrix[posA[0]][posB[1]]);
-        plaintext.append(matrix[posB[0]][posA[1]]);
-      }
-    }
+.text
+main:
+    # Read width
+    li $v0, 4
+    la $a0, width_prompt
+    syscall
+    li $v0, 5
+    syscall
+    move $t0, $v0
+    
+    # Read height
+    li $v0, 4
+    la $a0, height_prompt
+    syscall
+    li $v0, 5
+    syscall
+    move $t1, $v0
+    
+    # Calculate area (width * height)
+    mul $t2, $t0, $t1
+    
+    # Calculate perimeter (2*(width + height))
+    add $t3, $t0, $t1
+    li $t4, 2
+    mul $t3, $t3, $t4
+    
+    # Print area
+    li $v0, 4
+    la $a0, area_msg
+    syscall
+    li $v0, 1
+    move $a0, $t2
+    syscall
+    li $v0, 4
+    la $a0, newline
+    syscall
+    
+    # Print perimeter
+    li $v0, 4
+    la $a0, perimeter_msg
+    syscall
+    li $v0, 1
+    move $a0, $t3
+    syscall
+    li $v0, 4
+    la $a0, newline
+    syscall
+    
+    # Exit
+    li $v0, 10
+    syscall
+```
 
-    return plaintext.toString();
-  }
+## Q8: Odd/Even Check
 
-  // Find the position of a letter in the matrix
-  private static int[] findPosition(char c) {
-    for (int i = 0; i < MATRIX_SIZE; i++) {
-      for (int j = 0; j < MATRIX_SIZE; j++) {
-        if (matrix[i][j] == c) {
-          return new int[] { i, j };
-        }
-      }
-    }
-    return null; // Should never happen
-  }
-}
+```mips
+.data
+prompt: .asciiz "Enter your number: "
+result_msg: .asciiz "A result of 0 is even, a result of 1 is odd: result = "
+newline: .asciiz "\n"
 
+.text
+main:
+    # Read number
+    li $v0, 4
+    la $a0, prompt
+    syscall
+    li $v0, 5
+    syscall
+    move $t0, $v0
+    
+    # Calculate i % 2
+    li $t1, 2
+    div $t0, $t1
+    mfhi $t2        # remainder is 0 (even) or 1 (odd)
+    
+    # Print result
+    li $v0, 4
+    la $a0, result_msg
+    syscall
+    li $v0, 1
+    move $a0, $t2
+    syscall
+    li $v0, 4
+    la $a0, newline
+    syscall
+    
+    # Exit
+    li $v0, 10
+    syscall
+```
 
-/=============RSA Implementaion ==========/
+## Q9: Box Surface Area and Volume
 
+```mips
+.data
+length_prompt: .asciiz "Enter length: "
+width_prompt: .asciiz "Enter width: "
+height_prompt: .asciiz "Enter height: "
+surface_msg: .asciiz "Surface Area = "
+volume_msg: .asciiz "Volume = "
+newline: .asciiz "\n"
 
-//**********RSA_Server.java********//
+.text
+main:
+    # Read length
+    li $v0, 4
+    la $a0, length_prompt
+    syscall
+    li $v0, 5
+    syscall
+    move $t0, $v0
+    
+    # Read width
+    li $v0, 4
+    la $a0, width_prompt
+    syscall
+    li $v0, 5
+    syscall
+    move $t1, $v0
+    
+    # Read height
+    li $v0, 4
+    la $a0, height_prompt
+    syscall
+    li $v0, 5
+    syscall
+    move $t2, $v0
+    
+    # Calculate surface area: 2*(lw + lh + wh)
+    mul $t3, $t0, $t1   # l*w
+    mul $t4, $t0, $t2   # l*h
+    mul $t5, $t1, $t2   # w*h
+    
+    add $t3, $t3, $t4   # lw + lh
+    add $t3, $t3, $t5   # lw + lh + wh
+    li $t4, 2
+    mul $t3, $t3, $t4   # 2*(lw + lh + wh)
+    
+    # Calculate volume: l*w*h
+    mul $t4, $t0, $t1
+    mul $t4, $t4, $t2
+    
+    # Print surface area
+    li $v0, 4
+    la $a0, surface_msg
+    syscall
+    li $v0, 1
+    move $a0, $t3
+    syscall
+    li $v0, 4
+    la $a0, newline
+    syscall
+    
+    # Print volume
+    li $v0, 4
+    la $a0, volume_msg
+    syscall
+    li $v0, 1
+    move $a0, $t4
+    syscall
+    li $v0, 4
+    la $a0, newline
+    syscall
+    
+    # Exit
+    li $v0, 10
+    syscall
+```
 
-import java.io.*;
-import java.math.BigInteger;
-import java.net.*;
-import java.security.SecureRandom;
+## Q10: Expression Evaluation with Questions
 
-public class RSA_Server {
-    private static final int PORT = 12345;
+```mips
+.data
+prompt_a: .asciiz "Enter a: "
+prompt_b: .asciiz "Enter b: "
+prompt_c: .asciiz "Enter c: "
+result_msg: .asciiz "s = (a + b) - (c + 101) = "
+newline: .asciiz "\n"
 
-    private static BigInteger n, d, e;
-
-    public static void main(String[] args) throws Exception {
-        // Generate RSA keys
-        int bitLength = 1024;
-        SecureRandom random = new SecureRandom();
-        BigInteger p = new BigInteger(bitLength / 2, 100, random);
-        BigInteger q = new BigInteger(bitLength / 2, 100, random);
-        n = p.multiply(q); // n = p x q
-        BigInteger phi = (p.subtract(BigInteger.ONE)).multiply(q.subtract(BigInteger.ONE)); //(p-1)x(q-1)
-        e = new BigInteger("65537"); // Common choice for e
-        d = e.modInverse(phi);
-
-        System.out.println("Server is running...");
-        System.out.println("Public Key: (e = " + e + ", n = " + n + ")");
-        System.out.println("Private Key: (d = " + d + ", n = " + n + ")");
-
-        try (ServerSocket serverSocket = new ServerSocket(PORT);
-             Socket socket = serverSocket.accept();
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-
-            System.out.println("Client connected.");
-
-            // Send public key to the client
-            out.writeObject(e);
-            out.writeObject(n);
-            out.flush();
-
-            // Receive encrypted message from the client
-            BigInteger encryptedMessage = (BigInteger) in.readObject();
-            System.out.println("Encrypted message received: " + encryptedMessage);
-
-            // Decrypt the message
-            BigInteger decryptedMessage = encryptedMessage.modPow(d, n);
-            String message = new String(decryptedMessage.toByteArray());
-            System.out.println("Decrypted message: " + message);
-
-            // Respond to the client
-            String response = "Message received: " + "Hello, what is your request?";
-            out.writeObject(response);
-        }
-    }
-}
-
-
-
-//**********RSA_Client.java********//
-
-import java.io.*;
-import java.math.BigInteger;
-import java.net.*;
-
-public class RSA_Client {
-    private static final String HOST = "localhost";
-    private static final int PORT = 12345;
-
-    public static void main(String[] args) throws Exception {
-        try (Socket socket = new Socket(HOST, PORT);
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-
-            System.out.println("Connected to server.");
-
-            // Receive public key from the server
-            BigInteger e = (BigInteger) in.readObject();
-            BigInteger n = (BigInteger) in.readObject();
-            System.out.println("Public key received: (e = " + e + ", n = " + n + ")");
-
-            // Message to send
-            String message = "Hello";
-            System.out.println("Original message: " + message);
-
-            // Encrypt the message
-            BigInteger plaintext = new BigInteger(message.getBytes());
-            BigInteger encryptedMessage = plaintext.modPow(e, n);
-            System.out.println("Encrypted message: " + encryptedMessage);
-
-            // Send encrypted message to the server
-            out.writeObject(encryptedMessage);
-
-            // Receive response from the server
-            String response = (String) in.readObject();
-            System.out.println("Response from server: " + response);
-        }
-    }
-}
+.text
+main:
+    # Read a
+    li $v0, 4
+    la $a0, prompt_a
+    syscall
+    li $v0, 5
+    syscall
+    move $t0, $v0
+    
+    # Read b
+    li $v0, 4
+    la $a0, prompt_b
+    syscall
+    li $v0, 5
+    syscall
+    move $t1, $v0
+    
+    # Read c
+    li $v0, 4
+    la $a0, prompt_c
+    syscall
+    li $v0, 5
+    syscall
+    move $t2, $v0
+    
+    # Calculate s = (a + b) - (c + 101)
+    add $t3, $t0, $t1   # a + b
+    addi $t4, $t2, 101  # c + 101
+    sub $t5, $t3, $t4   # (a + b) - (c + 101)
+    
+    # Print result
+    li $v0, 4
+    la $a0, result_msg
+    syscall
+    li $v0, 1
+    move $a0, $t5
+    syscall
+    li $v0, 4
+    la $a0, newline
+    syscall
+    
+    # Answers to questions:
+    # a) For a=5, b=10, c=-30:
+    #    (5 + 10) - (-30 + 101) = 15 - 71 = -56
+    # b) The 'sub $t5, $t3, $t4' instruction computes s, using $t5
+    # c) The address depends on where the program is loaded in memory
+    # d) At breakpoint, $t5 would contain -56 (decimal) or 0xFFFFFFC8 (hex)
+    
+    # Exit
+    li $v0, 10
+    syscall
+```
