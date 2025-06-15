@@ -1,0 +1,1159 @@
+Q1)- 2019
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import java.io.*;
+//import java.util.concurrent.TimeUnit;
+
+
+public class user_registration {
+
+	public static void main(String[] args) {
+	// Set path to chromedriver
+        System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
+
+        // Initialize driver
+        WebDriver driver = new ChromeDriver();
+
+
+        // Maximize window
+        driver.manage().window().maximize();
+        //driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+        // Step 1 & 2 - Load home.html (adjust path if needed)
+        driver.navigate().to("file:///C:/Users/A/Desktop/Registration/index.html");
+
+
+        // Step 3 - Fill First Name
+        driver.findElement(By.id("fname")).sendKeys("Ava Bella");
+
+        // Step 4 - Fill Last Name
+        driver.findElement(By.id("lname")).sendKeys("Willson");
+
+        // Step 5 - Fill Email
+        driver.findElement(By.id("email")).sendKeys("Bella@gmail.com");
+
+        // Step 6 & 7 - Password and Confirm Password
+        WebElement pwd = driver.findElement(By.id("password"));
+        WebElement cpwd = driver.findElement(By.id("cpassword"));
+        String password = "ava@2024";
+        String confirmPassword = "ava@2024";
+
+        pwd.sendKeys(password);
+        cpwd.sendKeys(confirmPassword);
+
+        // Validations
+        if (password.isEmpty()) {
+            System.out.println("Password field is Empty");
+        } else if (confirmPassword.isEmpty()) {
+            System.out.println("Confirm Password field is Empty");
+        } else if (password.equals(confirmPassword)) {
+            System.out.println("Passwords are Equal");
+        } else {
+            System.out.println("Passwords are not Equal");
+        }
+
+        // Step 8 - Select Gender: Female
+        driver.findElement(By.id("female")).click();
+
+        // Step 9 - Hobbies: Travel
+        driver.findElement(By.id("travel")).click();
+
+        // Step 10 - Source of Income
+        WebElement incomeSource = driver.findElement(By.id("incomeSource"));
+        incomeSource.sendKeys("Self-employed");
+
+        // Step 11 - Income
+        driver.findElement(By.id("income")).sendKeys("65K");
+
+        // Step 12 - Upload Image
+        File image = new File("C:/Users/A/Desktop/Registration/sqa.png");
+        WebElement upload = driver.findElement(By.id("imageUpload"));
+        if (!image.exists()) {
+            System.out.println("Select image data");
+        } else {
+            upload.sendKeys(image.getAbsolutePath());
+        }
+
+        // Step 13 - Age
+        WebElement age = driver.findElement(By.id("age"));
+        age.sendKeys("30");
+
+        // Step 14 - Biodata
+        driver.findElement(By.id("biodata")).sendKeys("Bella is a software engineer with extensive experience and management skill and works for hi-tech telecommunication company.");
+
+        // Step 15 - Open new tab and search Yahoo
+        ((JavascriptExecutor) driver).executeScript("window.open('https://www.yahoo.com', '_blank');");
+
+	}
+}
+
+
+Q1) - 2017
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+
+public class detail_form {
+
+	public static void main(String[] args) {
+		// Set path to chromedriver
+        System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
+
+        // Initialize driver
+        WebDriver driver = new ChromeDriver();
+
+
+        // Maximize window
+        driver.manage().window().maximize();
+        
+        driver.navigate().to("file:///C:/Users/A/Desktop/Registration/registration.html");
+        
+     // iii) Enter first name
+        driver.findElement(By.name("firstName")).sendKeys("Joe Root");
+        
+        // iv) Enter last name
+        driver.findElement(By.id("lastName")).sendKeys("Billy Root");
+        
+        // v) Enter password
+        driver.findElement(By.id("password")).sendKeys("admintest@8282");
+        
+        // vi) Enter email
+        driver.findElement(By.id("email")).sendKeys("joeadmin123@gmail.com");
+        
+        // vii) Enter mobile
+        driver.findElement(By.id("mobile")).sendKeys("0725648914");
+        
+        // viii) Enter address
+        driver.findElement(By.id("address")).sendKeys("No 33A Sheffield, Yorkshire, Netherland");
+        
+        // ix) Select gender as Male
+        driver.findElement(By.id("male")).click();
+        
+        // x) Check Cricket checkbox
+        driver.findElement(By.id("cricket")).click();
+        
+        // xi) Select DOB
+        WebElement dob = driver.findElement(By.id("dob"));
+        dob.sendKeys("30/12/1990"); // Format may need adjustment based on browser
+        
+        // xii) Select country as England (without Select class)
+        driver.findElement(By.id("country")).click();
+        driver.findElement(By.xpath("//select[@id='country']/option[text()='England']")).click();
+        
+        // or 
+        
+        //WebElement countryDropdown = driver.findElement(By.id("country"));
+        //countryDropdown.sendKeys("England");
+        
+        // xiii) Enter O/L results
+        driver.findElement(By.id("olResults")).sendKeys("8A 2B");
+        driver.findElement(By.id("olYear")).sendKeys("2006");
+        
+        // xiv) Enter A/L results
+        driver.findElement(By.id("alResults")).sendKeys("2A B");
+        driver.findElement(By.id("alYear")).sendKeys("2009");
+        
+        // xv) Enter graduation results
+        driver.findElement(By.id("gradResults")).sendKeys("3.33 out of 4.00");
+        driver.findElement(By.id("gradYear")).sendKeys("2015");
+        
+        // xvi) Enter master results
+        driver.findElement(By.id("masterResults")).sendKeys("pending");
+        driver.findElement(By.id("masterYear")).sendKeys("Null");
+
+	}
+
+}
+
+
+
+
+Q2) - 2019 - methods calles
+package php_test_1;
+
+import java.util.concurrent.TimeUnit;
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+
+public class php_test {
+    static WebDriver driver;
+
+    public static void callBrowser() {
+        System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
+        driver = new ChromeDriver();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.navigate().to("http://localhost/employee/admin/index.php");
+        driver.manage().window().maximize();
+        
+    }
+
+    public static void passingUsernameAndPassword(String userName, String userPassword) {
+        driver.findElement(By.name("username")).sendKeys(userName);
+        driver.findElement(By.name("password")).sendKeys(userPassword);
+    }
+
+    public static void adminLogin() {
+    	
+        WebElement usernameField = driver.findElement(By.name("username"));
+        WebElement passwordField = driver.findElement(By.name("password"));
+
+        String username = usernameField.getAttribute("value");
+        String password = passwordField.getAttribute("value");
+
+        if (username.isEmpty()) {
+            System.out.println("username is empty");
+        } else if (password.isEmpty()) {
+            System.out.println("password is empty");
+        } else {
+        	driver.findElement(By.xpath("//button[text()='Login ']")).click();
+        }
+    }
+
+    public static void clickUserAndURLValidation() {
+    	
+        driver.findElement(By.linkText("Users")).click(); 
+        String expectedURL = "http://localhost/employee/admin/users.php";
+        String actualURL = driver.getCurrentUrl();
+
+        if (actualURL.equals(expectedURL)) {
+            System.out.println("URL Validation Success!");
+        } else {
+            System.out.println("URL Validation Failed!");
+        }
+    }
+
+    public static void entriesDropdown() {
+    	 
+        WebElement dropdown = driver.findElement(By.id("table_length")); 
+        // Select by index manually: e.g., index 2 (3rd option)
+        int indexToSelect = 2;
+
+        WebElement option = dropdown.findElements(By.tagName("option")).get(indexToSelect);
+        option.click();
+
+        System.out.println("The Selected Option is: " + option.getText());
+    }
+
+    public static void searchUser(String name) {
+    	
+        WebElement searchBox = driver.findElement(By.cssSelector("input[type='search']"));
+        searchBox.sendKeys(name);
+    }
+
+    public static void addNewUser(String username, String password, String firstname, String lastname) {
+
+        driver.findElement(By.id("new_user")).click(); 
+        driver.findElement(By.name("username")).sendKeys(username);
+        driver.findElement(By.name("password")).sendKeys(password);
+        driver.findElement(By.name("firstname")).sendKeys(firstname);
+        driver.findElement(By.name("lastname")).sendKeys(lastname);
+        driver.findElement(By.name("save")).click(); 
+
+       
+        try {
+            
+            Alert alert = driver.switchTo().alert();
+            System.out.println("User Saving Alert Message is: " + alert.getText());
+            alert.accept();
+        } catch (NoAlertPresentException e) {
+            System.out.println("No alert appeared.");
+        }
+    }
+
+    public static void updateUser(String newLastname) {
+
+    	driver.findElement(By.xpath("//tr[td[contains(., 'Ram')]]//button[contains(@class, 'edit_user')]")).click();
+        WebElement lastnameField = driver.findElement(By.name("lastname"));
+        lastnameField.clear();
+        lastnameField.sendKeys(newLastname);
+        driver.findElement(By.name("save")).click();
+
+        
+        
+        try {
+            
+        	Alert alert = driver.switchTo().alert();
+            System.out.println("User Updating Alert Message is : " + alert.getText());
+            alert.accept();
+        } catch (NoAlertPresentException e) {
+            System.out.println("No alert appeared.");
+        }
+        
+    }
+
+    public static void deleteUser() {
+
+    	driver.findElement(By.xpath("//tr[td[contains(., 'Ram')]]//button[contains(@class, 'remove_user')]")).click();
+        
+        try {
+        	Alert alert = driver.switchTo().alert();
+            System.out.println("User Deleting Alert Message is: " + alert.getText());
+            alert.dismiss();
+        } catch (NoAlertPresentException e) {
+            System.out.println("No alert appeared.");
+        }
+    }
+
+    public static void logoutUser() {
+    	
+        driver.findElement(By.className("text-light")).click(); 
+    }
+
+    public static void main(String[] args) {
+    	callBrowser();
+    	passingUsernameAndPassword("admin", "admin123");
+    	adminLogin();
+    	clickUserAndURLValidation();
+    	entriesDropdown();
+    	searchUser("Ad");
+    	addNewUser("ram@gmail.com", "ram@12345", "Ram", "Gopal");
+    	updateUser("User");
+    	deleteUser();
+    	logoutUser();
+    }
+}
+
+
+
+============================================
+Q3) - 2019
+============================================
+
+TestNG Project Solution for "Testbasic_Exam"
+
+============================================
+1. testNGHome.java
+============================================
+
+import org.testng.annotations.Test;
+
+public class testNGHome {
+    
+    @Test
+    public void registerAccount() {
+        System.out.println("First register your account");
+    }
+    
+    @Test
+    public void sendEmail() {
+        System.out.println("Send email after login");
+    }
+    
+    @Test
+    public void login() {
+        System.out.println("Login to the account after registration");
+    }
+    
+    @Test
+    public void homepage() {
+        System.out.println("This is the index page");
+    }
+    
+    @Test
+    public void logout() {
+        System.out.println("Logout current session");
+    }
+}
+
+============================================
+2. dependentClass.java
+============================================
+
+import org.testng.annotations.Test;
+
+public class dependentClass {
+    
+    @Test
+    public void registerAccount() {
+        System.out.println("[Dependent] First register your account");
+    }
+    
+    @Test(dependsOnMethods = "registerAccount")
+    public void login() {
+        System.out.println("[Dependent] Login to the account after registration");
+    }
+    
+    @Test(dependsOnMethods = {"login", "homepage"})
+    public void logout() {
+        System.out.println("[Dependent] Logout current session");
+    }
+    
+    @Test
+    public void sendEmail() {
+        System.out.println("[Dependent] Send email after login");
+    }
+    
+    @Test
+    public void homepage() {
+        System.out.println("[Dependent] This is the index page");
+    }
+}
+
+============================================
+3. testng.xml
+============================================
+
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Testbasic_Exam Suite">
+    <test name="testNGHome Tests">
+        <classes>
+            <class name="testNGHome"/>
+        </classes>
+    </test>
+    
+    <test name="Dependent Tests">
+        <classes>
+            <class name="dependentClass"/>
+        </classes>
+    </test>
+</suite>
+
+============================================
+Project Structure
+============================================
+Testbasic_Exam/
+├── src/
+│   ├── testNGHome.java
+│   ├── dependentClass.java
+│   └── testng.xml
+└── lib/ (contains TestNG jar files)
+
+============================================
+Execution Instructions
+============================================
+1. Create a new Java project in Eclipse/IDE named "Testbasic_Exam"
+2. Add TestNG library to the project (add to build path)
+3. Create the above files in their respective locations
+4. Right-click on testng.xml and select "Run As" > "TestNG Suite"
+5. Or run from command line: java -cp "path/to/testng.jar" org.testng.TestNG testng.xml
+
+============================================
+Expected Output
+============================================
+For testNGHome (random order but all tests executed):
+First register your account
+Send email after login
+Login to the account after registration
+This is the index page
+Logout current session
+
+For dependentClass (ordered execution):
+[Dependent] First register your account
+[Dependent] This is the index page
+[Dependent] Send email after login
+[Dependent] Login to the account after registration
+[Dependent] Logout current session
+
+
+
+
+============================================
+Q3) - 2018
+============================================
+
+============================================
+1. employeeTest.java
+============================================
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
+
+public class employeeTest {
+    WebDriver driver;
+    String baseUrl = "http://localhost/employee/users.php";
+
+    @BeforeTest
+    public void setUp() {
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+    }
+
+    @Test(priority = 1)
+    public void loadPage() {
+        driver.get(baseUrl);
+        assertEquals(driver.getTitle(), "Employee Management System");
+        System.out.println("Page loaded successfully");
+    }
+
+    @Test(priority = 2)
+    public void loginTest() {
+        driver.findElement(By.name("username")).sendKeys("admin");
+        driver.findElement(By.name("password")).sendKeys("admin123");
+        driver.findElement(By.xpath("//button[@type='submit']")).click();
+        
+        try {
+            WebElement errorMsg = driver.findElement(By.className("alert-danger"));
+            System.out.println("Login failed: " + errorMsg.getText());
+            fail("Login failed with invalid credentials");
+        } catch (Exception e) {
+            System.out.println("Login successful");
+        }
+    }
+
+    @Test(priority = 3, dependsOnMethods = "loginTest")
+    public void searchEmployee() {
+        WebElement searchBox = driver.findElement(By.name("search"));
+        searchBox.sendKeys("ab");
+        searchBox.submit();
+        
+        try {
+            WebElement tableRow = driver.findElement(By.xpath("//table/tbody/tr"));
+            System.out.println("data detected");
+        } catch (Exception e) {
+            System.out.println("data undetected");
+        }
+    }
+
+    @Test(priority = 4, dependsOnMethods = "searchEmployee")
+    public void deleteEmployee() {
+        driver.findElement(By.xpath("(//a[contains(@href,'delete')])[1]")).click();
+        driver.switchTo().alert().accept();
+        System.out.println("Employee record deleted");
+    }
+
+    @Test(priority = 5, dependsOnMethods = "deleteEmployee")
+    public void updateEmployee() {
+        driver.findElement(By.xpath("(//a[contains(@href,'edit')])[1]")).click();
+        WebElement popup = driver.findElement(By.id("editModal"));
+        assertTrue(popup.isDisplayed());
+        driver.findElement(By.xpath("//button[@data-dismiss='modal']")).click();
+        System.out.println("Update popup closed");
+    }
+
+    @Test(priority = 6, dependsOnMethods = "updateEmployee")
+    public void addNewEmployee() {
+        driver.findElement(By.xpath("//button[contains(text(),'Add New')]")).click();
+        WebElement popup = driver.findElement(By.id("addModal"));
+        assertTrue(popup.isDisplayed());
+        driver.findElement(By.xpath("//button[@data-dismiss='modal']")).click();
+        System.out.println("Add new popup closed");
+    }
+
+    @Test(priority = 7, dependsOnMethods = "addNewEmployee")
+    public void logoutTest() {
+        driver.findElement(By.linkText("Logout")).click();
+        assertTrue(driver.getCurrentUrl().contains("login.php"));
+        System.out.println("Logged out successfully");
+    }
+
+    @AfterTest
+    public void tearDown() {
+        driver.quit();
+    }
+}
+
+============================================
+2. testng.xml
+============================================
+
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="user_employee Suite">
+    <test name="Employee Management Tests">
+        <classes>
+            <class name="employeeTest"/>
+        </classes>
+    </test>
+</suite>
+
+============================================
+Project Structure
+============================================
+user_employee/
+├── src/
+│   ├── employeeTest.java
+│   └── testng.xml
+├── lib/
+│   ├── selenium-server-*.jar
+│   ├── chromedriver.exe (or appropriate for your OS)
+│   └── other required jars
+└── test-output/ (will be created after execution)
+
+============================================
+Setup Instructions
+============================================
+1. Extract "employee.rar" to your localhost folder
+2. Import attendance.sql to your database
+3. Create new TestNG project in Eclipse named "user_employee"
+4. Add Selenium WebDriver and TestNG libraries to build path
+5. Place chromedriver in project folder (update path in code)
+6. Create the Java class and XML file as shown above
+7. Right-click testng.xml and select "Run As TestNG Suite"
+
+============================================
+Expected Output
+============================================
+Page loaded successfully
+Login successful
+data detected (or data undetected if no matches)
+Employee record deleted
+Update popup closed
+Add new popup closed
+Logged out successfully
+
+
+
+============================================
+Q3) - 2017
+============================================
+============================================
+Project: TestFinal_Exam
+============================================
+
+1. File Structure:
+TestFinal_Exam/
+├── src/
+│   ├── TestNGHome.java
+│   ├── ParamsTest.java
+│   ├── DataProviderTestNG.java
+│   ├── dataUtils/
+│   │   └── SourceData.java
+│   ├── groupTest.xml
+│   └── paramsTest.xml
+└── lib/ (TestNG and Selenium jars)
+
+============================================
+1. TestNGHome.java
+============================================
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.*;
+
+public class TestNGHome {
+    WebDriver driver;
+    String baseUrl = "http://localhost/TestNGFood/";
+
+    @Test(groups = "open")
+    public void callBrowser() {
+        System.setProperty("webdriver.chrome.driver", "chromedriver_path");
+        driver = new ChromeDriver();
+        driver.get(baseUrl);
+        System.out.println("Browser opened and website loaded");
+    }
+
+    @Test(groups = "check", dependsOnGroups = "open")
+    public void checkTitle() {
+        String testTitle = "TestNG Food Store";
+        String originalTitle = driver.getTitle();
+        System.out.println("Original Title : " + originalTitle);
+        Assert.assertEquals(originalTitle, testTitle);
+    }
+
+    @Test(groups = "click", dependsOnGroups = "check")
+    public void clickElement() {
+        driver.findElement(By.linkText("Gallery")).click();
+        System.out.println("Food gallery page is displayed");
+    }
+
+    @AfterTest
+    public void tearDown() {
+        driver.quit();
+    }
+}
+
+============================================
+2. groupTest.xml
+============================================
+
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Group Test Suite">
+    <test name="Group Tests">
+        <groups>
+            <run>
+                <include name="open"/>
+                <include name="check"/>
+                <include name="click"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="TestNGHome"/>
+        </classes>
+    </test>
+</suite>
+
+============================================
+3. ParamsTest.java
+============================================
+
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
+
+public class ParamsTest {
+    @Test
+    @Parameters({"val1", "val2"})
+    public void Sum(int v1, int v2) {
+        int finalsum = v1 + v2;
+        System.out.println("The final sum of the given values is: " + finalsum);
+    }
+
+    @Test
+    @Parameters({"val1", "val2"})
+    public void Diff(int v1, int v2) {
+        int finaldiff = v1 - v2;
+        System.out.println("The final difference of the given values is: " + finaldiff);
+    }
+}
+
+============================================
+4. paramsTest.xml
+============================================
+
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Parameter Test Suite">
+    <test name="Parameter Tests">
+        <parameter name="val1" value="10"/>
+        <parameter name="val2" value="5"/>
+        <classes>
+            <class name="ParamsTest"/>
+        </classes>
+    </test>
+</suite>
+
+============================================
+5. DataProviderTestNG.java
+============================================
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import org.testng.annotations.DataProvider;
+import dataUtils.SourceData;
+import java.lang.reflect.Method;
+
+public class DataProviderTestNG {
+    @Test(dataProvider = "dpMethod", dataProviderClass = SourceData.class)
+    public void Sum(int a, int b, int result) {
+        int sum = a + b;
+        System.out.println("SUM (" + a + " + " + b + ") : " + sum);
+        Assert.assertEquals(result, sum);
+    }
+
+    @Test(dataProvider = "dpMethod", dataProviderClass = SourceData.class)
+    public void Diff(int a, int b, int result) {
+        int diff = a - b;
+        System.out.println("DIFF (" + a + " - " + b + ") : " + diff);
+        Assert.assertEquals(result, diff);
+    }
+}
+
+============================================
+6. dataUtils/SourceData.java
+============================================
+
+package dataUtils;
+import org.testng.annotations.DataProvider;
+import java.lang.reflect.Method;
+
+public class SourceData {
+    @DataProvider(name = "dpMethod")
+    public Object[][] dpMethod(Method m) {
+        switch (m.getName()) {
+            case "Sum":
+                return new Object[][]{{2, 3, 5}, {5, 7, 12}};
+            case "Diff":
+                return new Object[][]{{2, 3, -1}, {5, 7, -2}};
+        }
+        return null;
+    }
+}
+
+============================================
+Execution Instructions
+============================================
+
+1. Extract "TestNGFood.rar" to C:\wamp\www or C:/xampp/htdocs
+2. Create TestNG project in Eclipse named "TestFinal_Exam"
+3. Add all Java files to src folder
+4. Add TestNG and Selenium jars to build path
+5. Update chromedriver_path in TestNGHome.java
+6. To run tests:
+   - Right-click on XML files and select "Run As TestNG Suite"
+   - Or run from command line: 
+     java -cp "bin;lib/*" org.testng.TestNG src/groupTest.xml
+     java -cp "bin;lib/*" org.testng.TestNG src/paramsTest.xml
+
+============================================
+Expected Output
+============================================
+
+For groupTest.xml:
+Browser opened and website loaded
+Original Title : TestNG Food Store
+Food gallery page is displayed
+
+For paramsTest.xml:
+The final sum of the given values is: 15
+The final difference of the given values is: 5
+
+For DataProvider tests:
+SUM (2 + 3) : 5
+SUM (5 + 7) : 12
+DIFF (2 - 3) : -1
+DIFF (5 - 7) : -2
+
+
+
+
+============================================
+Q3) - 2017
+============================================
+============================================
+Project Structure
+============================================
+Testbasic_Exam/
+├── src/
+│   ├── testNGHome.java
+│   ├── dependentClass.java
+│   ├── ParameterTest.java
+│   ├── PrimeNumberChecker.java
+│   ├── ParamTestWithDataProvider1.java
+│   └── testng.xml
+└── lib/ (TestNG jar files)
+
+============================================
+1. testNGHome.java
+============================================
+import org.testng.annotations.Test;
+
+public class testNGHome {
+    @Test
+    public void registerAccount() {
+        System.out.println("First register your account");
+    }
+    
+    @Test
+    public void sendEmail() {
+        System.out.println("Send email after login");
+    }
+    
+    @Test
+    public void login() {
+        System.out.println("Login to the account after registration");
+    }
+    
+    @Test
+    public void homePage() {
+        System.out.println("This is the index page");
+    }
+    
+    @Test
+    public void logout() {
+        System.out.println("Logout current session");
+    }
+}
+
+============================================
+2. dependentClass.java
+============================================
+import org.testng.annotations.Test;
+
+public class dependentClass {
+    @Test
+    public void registerAccount() {
+        System.out.println("[Dependent] First register your account");
+    }
+    
+    @Test(dependsOnMethods = "registerAccount")
+    public void login() {
+        System.out.println("[Dependent] Login to the account after registration");
+    }
+    
+    @Test(dependsOnMethods = {"login", "homePage"})
+    public void logout() {
+        System.out.println("[Dependent] Logout current session");
+    }
+    
+    @Test
+    public void sendEmail() {
+        System.out.println("[Dependent] Send email after login");
+    }
+    
+    @Test
+    public void homePage() {
+        System.out.println("[Dependent] This is the index page");
+    }
+}
+
+============================================
+3. ParameterTest.java
+============================================
+import org.testng.annotations.Test;
+
+public class ParameterTest {
+    @Test
+    @Parameters({"suite-param"})
+    public void parameterTestOne(String param) {
+        System.out.println("Test one suite param is: " + param);
+    }
+    
+    @Test
+    @Parameters({"test-two-param"})
+    public void parameterTestTwo(String param) {
+        System.out.println("Test two param is: " + param);
+    }
+    
+    @Test
+    @Parameters({"suite-param", "test-three-param"})
+    public void parameterTestThree(String param, String paramTwo) {
+        System.out.println("Test three suite param is: " + param);
+        System.out.println("Test three param is: " + paramTwo);
+    }
+}
+
+============================================
+4. PrimeNumberChecker.java
+============================================
+public class PrimeNumberChecker {
+    public Boolean validate(final Integer primeNumber) {
+        for (int i = 2; i < (primeNumber / 2); i++) {
+            if (primeNumber % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+============================================
+5. ParamTestWithDataProvider1.java
+============================================
+import org.testng.annotations.*;
+import org.testng.Assert;
+
+public class ParamTestWithDataProvider1 {
+    private PrimeNumberChecker primeNumberChecker;
+    
+    @BeforeMethod
+    public void initialize() {
+        primeNumberChecker = new PrimeNumberChecker();
+    }
+    
+    @DataProvider(name = "test1")
+    public static Object[][] primeNumbers() {
+        return new Object[][] {{2, true}, {6, false}, {19, true}, {22, false}, {23, true}};
+    }
+    
+    @Test(dataProvider = "test1")
+    public void testPrimeNumberChecker(Integer inputNumber, Boolean expectedResult) {
+        System.out.println(inputNumber + " " + expectedResult);
+        Assert.assertEquals(expectedResult, primeNumberChecker.validate(inputNumber));
+    }
+}
+
+============================================
+6. testng.xml
+============================================
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Testbasic_Exam Suite" verbose="1">
+    <parameter name="suite-param" value="suite-level-value"/>
+    <parameter name="test-two-param" value="test-two-value"/>
+    
+    <test name="Basic Tests">
+        <classes>
+            <class name="testNGHome"/>
+        </classes>
+    </test>
+    
+    <test name="Dependent Tests">
+        <classes>
+            <class name="dependentClass"/>
+        </classes>
+    </test>
+    
+    <test name="Parameter Tests">
+        <parameter name="test-three-param" value="test-three-value"/>
+        <parameter name="suite-param" value="overridden-suite-value"/>
+        <classes>
+            <class name="ParameterTest"/>
+        </classes>
+    </test>
+    
+    <test name="DataProvider Tests">
+        <classes>
+            <class name="ParamTestWithDataProvider1"/>
+        </classes>
+    </test>
+</suite>
+
+============================================
+Execution Instructions
+============================================
+1. Create new TestNG project in Eclipse named "Testbasic_Exam"
+2. Add all Java files to src folder
+3. Add TestNG library to build path
+4. Right-click on testng.xml and select "Run As TestNG Suite"
+
+============================================
+Expected Output
+============================================
+For testNGHome (random order):
+First register your account
+Send email after login
+Login to the account after registration
+This is the index page
+Logout current session
+
+For dependentClass (ordered):
+[Dependent] First register your account
+[Dependent] Login to the account after registration
+[Dependent] This is the index page
+[Dependent] Send email after login
+[Dependent] Logout current session
+
+For ParameterTest:
+Test one suite param is: suite-level-value
+Test two param is: test-two-value
+Test three suite param is: overridden-suite-value
+Test three param is: test-three-value
+
+For ParamTestWithDataProvider1:
+2 true
+6 false
+19 true
+22 false
+23 true
+
+
+
+
+
+Q2) - lms example- without methods calles
+package php_test_1;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class php_test {
+
+	public static void main(String[] args) {
+		//set the path and create driver instance
+		System.setProperty("webdriver.chrome.driver","chromedriver.exe");
+		WebDriver driver = new ChromeDriver();
+
+		//load the local project form xampp server
+		driver.navigate().to("http://localhost/employee/admin/index.php");
+
+		//maximizing the window
+		driver.manage().window().maximize();
+		
+		// Wait to make sure the page is fully loaded
+		try {
+			Thread.sleep(1000);
+		}catch(InterruptedException e){
+			e.printStackTrace();
+			
+		}
+
+		//pass the values to the login page
+		//driver.findElement(By.name("username")).sendKeys("admin");
+		//driver.findElement(By.name("password")).sendKeys("admin123");
+
+		//click the login button
+		//driver.findElement(By.xpath("//button[text()='Login ']")).click();
+		//the space after Login is for the arrow icon in the button design
+
+		//can only use in form
+		//driver.findElement(By.xpath("//button[text()='Login ']")).submit();
+
+		//another way
+		//driver.findElement(By.xpath("//button[contains(text(), 'Login ')]")).click();
+
+		//here the difference between [text()=''] and [contains(text(),'')] 
+		//is [text()=''] is checking absolute match but [contains(text(),'')] 
+		//is looking for relative match
+		
+		//click the cancel button
+		//driver.findElement(By.xpath("//button[text()='Reset ']")).click();
+		//the space after Reset is for the refresh icon in the button design
+
+		//checking and validating the login input fields are working fine
+//		WebElement inputUserName = 
+//		    driver.findElement(By.name("username"));
+//		inputUserName.sendKeys("Sample");
+//
+//		WebElement inputUserPassword = 
+//		    driver.findElement(By.name("password"));
+//		inputUserPassword.sendKeys("sample123");
+//
+//		if (inputUserName.getAttribute("value").isEmpty()) {
+//		    System.out.println("Username is Empty");
+//		}
+//		else if (inputUserPassword.getAttribute("value").isEmpty()) {
+//		    System.out.println("Password is Empty");
+//		}
+//		else {
+//			// Trigger the login through JavaScript to allow AJAX login
+//			driver.findElement(By.xpath("//button[text()='Login ']")).click();
+//		}
+		
+		//DO THE ABOVE BY USING XPATH TECHNIQUE
+		WebElement inputUserName = 
+		    driver.findElement(By.xpath("//input[@name='username']"));
+		inputUserName.sendKeys("admin");
+
+		WebElement inputUserPassword = 
+		    driver.findElement(By.xpath("//input[@name='password']"));
+		inputUserPassword.sendKeys("admin123");
+
+		if(inputUserName.getAttribute("value").isEmpty()) {
+		    System.out.println("Username is Empty");
+		}
+		else if(inputUserPassword.getAttribute("value").isEmpty()) {
+		    System.out.println("Password is Empty");
+		}
+		else {
+		    driver.findElement(By.xpath("//button[text()='Login ']")).click();
+		 // Go to employee page by clicking the side menu
+		    driver.findElement(By.linkText("Employee")).click();
+		    driver.findElement(By.id("Employee")).click();
+		    driver.findElement(By.xpath("//a[contains(@id,'Employee')]")).click();
+		    driver.findElement(By.xpath("//*[contains(@id,'Employee')]")).click();
+
+		    // Checking search box
+		    driver.findElement(By.xpath("//input[@type='search']")).sendKeys("pa");
+
+		    // Another way of checking search box
+		    //driver.findElement(By.xpath("//*[@id='table_filter']/label/input")).sendKeys("pa");
+
+		    // Checking add new button working
+		    driver.findElement(By.id("new_emp_btn")).click();
+
+		    // XPath way of checking add new button working
+		    //driver.findElement(By.xpath("//*[@id='new_emp_btn']")).click();
+
+		    // Set time to wait for the form
+		    driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+		    // Fill the form
+		    driver.findElement(By.name("firstname")).sendKeys("Ravi");
+		    driver.findElement(By.name("middlename")).sendKeys("kumar");
+		    driver.findElement(By.name("lastname")).sendKeys("Ramesh");
+		    driver.findElement(By.name("department")).sendKeys("HR");
+		    driver.findElement(By.name("position")).sendKeys("Staff");
+
+		    // Save the form
+		    driver.findElement(By.xpath("//button[text()=' Save']")).click();
+
+		    // XPath way of saving the form
+		    //driver.findElement(By.xpath("//*[@id='employee_frm']/div[2]/button")).click();
+		}
+
+	}
+
+}
+
+
+
+
+
+
