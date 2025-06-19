@@ -492,7 +492,7 @@ newline: .asciiz "\n"
 .text
 .globl main
 main:
-    # First number
+   
     li $v0, 4
     la $a0, msg1
     syscall
@@ -500,7 +500,7 @@ main:
     syscall
     move $t0, $v0
 
-    # Second number
+    
     li $v0, 4
     la $a0, msg2
     syscall
@@ -508,7 +508,7 @@ main:
     syscall
     move $t1, $v0
 
-    # Third number
+    
     li $v0, 4
     la $a0, msg3
     syscall
@@ -516,7 +516,7 @@ main:
     syscall
     move $t2, $v0
 
-    # Compare t0 and t1
+    
     ble $t0, $t1, firstSmaller
     move $t3, $t1
     j compareWithT2
@@ -563,57 +563,57 @@ newline:  .asciiz "\nContent read from file:\n"
 .text
 .globl main
 main:
-    # --- Open file for writing ---
-    li $v0, 13             # syscall: open file
-    la $a0, filename       # file name
-    li $a1, 1              # flag: write
-    li $a2, 0              # mode (unused)
+    
+    li $v0, 13             
+    la $a0, filename       
+    li $a1, 1             
+    li $a2, 0              
     syscall
-    move $s0, $v0          # file descriptor
+    move $s0, $v0         
 
-    # --- Write to file ---
-    li $v0, 15             # syscall: write
-    move $a0, $s0          # file descriptor
-    la $a1, text           # text to write
-    li $a2, 19             # length of string
+    
+    li $v0, 15             
+    move $a0, $s0       
+    la $a1, text          
+    li $a2, 19            
     syscall
 
-    # --- Close file ---
-    li $v0, 16             # syscall: close
+    
+    li $v0, 16            
     move $a0, $s0
     syscall
 
-    # --- Reopen file for reading ---
+    
     li $v0, 13
     la $a0, filename
-    li $a1, 0              # flag: read
+    li $a1, 0             
     li $a2, 0
     syscall
     move $s0, $v0
 
-    # --- Read from file ---
-    li $v0, 14             # syscall: read
+   
+    li $v0, 14             
     move $a0, $s0
     la $a1, info
-    li $a2, 50             # read up to 50 bytes
+    li $a2, 50            
     syscall
 
-    # --- Close file again ---
+   
     li $v0, 16
     move $a0, $s0
     syscall
 
-    # --- Print new line ---
+   
     li $v0, 4
     la $a0, newline
     syscall
 
-    # --- Print content of info ---
+   
     li $v0, 4
     la $a0, info
     syscall
 
-    # --- Exit ---
+   
     li $v0, 10
     syscall
 
@@ -637,10 +637,10 @@ newline: .asciiz "\n"
 .text
 .globl main
 main:
-    li $t0, 6        # outer loop counter
+    li $t0, 6       
 
 outer_loop:
-    li $t1, 0        # inner loop counter
+    li $t1, 0        
 
 inner_loop:
     bge $t1, $t0, end_inner
@@ -687,29 +687,29 @@ arr: .space 8      # Space for two 4-byte integers (2 x 4 = 8 bytes)
 .text
 .globl main
 main:
-    # Prompt and read first number
+    
     li $v0, 4
     la $a0, prompt1
     syscall
 
     li $v0, 5
     syscall
-    sw $v0, arr        # Store first input in arr[0]
+    sw $v0, arr       
 
-    # Prompt and read second number
+    
     li $v0, 4
     la $a0, prompt2
     syscall
 
     li $v0, 5
     syscall
-    sw $v0, arr+4      # Store second input in arr[1]
+    sw $v0, arr+4      
 
-    # Load inputs from array
-    lw $t0, arr        # t0 = arr[0]
-    lw $t1, arr+4      # t1 = arr[1]
+    
+    lw $t0, arr       
+    lw $t1, arr+4      
 
-    ###### Addition ######
+    
     add $t2, $t0, $t1
     li $v0, 4
     la $a0, summsg
@@ -721,7 +721,7 @@ main:
     la $a0, newline
     syscall
 
-    ###### Subtraction ######
+    
     sub $t2, $t0, $t1
     li $v0, 4
     la $a0, submsg
@@ -733,7 +733,7 @@ main:
     la $a0, newline
     syscall
 
-    ###### Multiplication ######
+  
     mul $t2, $t0, $t1
     li $v0, 4
     la $a0, mulmsg
@@ -745,9 +745,9 @@ main:
     la $a0, newline
     syscall
 
-    ###### Division ######
-    div $t0, $t1        # t0 / t1
-    mflo $t2            # quotient in $t2
+   
+    div $t0, $t1       
+    mflo $t2            
     li $v0, 4
     la $a0, divmsg
     syscall
@@ -758,7 +758,7 @@ main:
     la $a0, newline
     syscall
 
-    # Exit program
+    
     li $v0, 10
     syscall
 
@@ -930,10 +930,10 @@ charK:   .asciiz "K"
 .text
 .globl main
 main:
-    li $t0, 6        # starting line length
+    li $t0, 6        
 
 row_loop:
-    li $t1, 0        # inner counter
+    li $t1, 0    
 
 print_K:
     bge $t1, $t0, print_nl
@@ -1659,22 +1659,22 @@ and prints whether it is even or odd.
 .globl main
 
 main:
-    # Print prompt message
+    
     li $v0, 4
     la $a0, prompt_msg
     syscall
 
-    # Read integer input
+   
     li $v0, 5
     syscall
-    move $t0, $v0       # Store input in $t0
+    move $t0, $v0       
 
-    # Check if input is positive: if ($t0 <= 0)
+   
     blez $t0, print_invalid
 
-    # Check if even or odd using modulus 2
-    andi $t1, $t0, 1     # if result = 0 → even, else odd
-    beqz $t1, print_even # if $t1 == 0
+   
+    andi $t1, $t0, 1    
+    beqz $t1, print_even 
     j print_odd
 
 print_even:
@@ -1714,24 +1714,24 @@ else
 .globl main
 
 main:
-    # Example values (you can replace with user input if needed)
-    li $t0, 10      # i = 10
-    li $t1, 5       # j = 5
+   
+    li $t0, 10      
+    li $t1, 5      
 
-    bne $t0, $t1, not_equal    # if (i != j) jump to addition
-    sub $t2, $t0, $t1          # else: h = i - j
+    bne $t0, $t1, not_equal    
+    sub $t2, $t0, $t1         
     j done
 
 not_equal:
-    add $t2, $t0, $t1          # h = i + j
+    add $t2, $t0, $t1        
 
 done:
-    # Print h
+    
     li $v0, 1
     move $a0, $t2
     syscall
 
-    # Exit program
+    
     li $v0, 10
     syscall
 
@@ -1747,10 +1747,10 @@ Exercise: Translate the following HLL statements into assembly instructions.
     j skip_add
 
 equal_branch:
-    add $t4, $t2, $t3        # f = g + h
+    add $t4, $t2, $t3        
 
 skip_add:
-    sub $t4, $t4, $t0        # f = f - i
+    sub $t4, $t4, $t0     
 -------------------------------------------------------
 
 
@@ -1758,11 +1758,11 @@ skip_add:
 -------------------------------------------------------
 
     beq $t0, $t1, do_add
-    sub $t4, $t4, $t0        # else: f = f - i
+    sub $t4, $t4, $t0       
     j done
 
 do_add:
-    add $t4, $t2, $t3        # if: f = g + h
+    add $t4, $t2, $t3     
 
 done:
 -------------------------------------------------------
