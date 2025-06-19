@@ -2210,6 +2210,66 @@ exit:
 
 -------------------------------------------------------
 
+main() {
+       static volatile int miles = prompt("Enter the number of miles driven:");
+       static volatile int gallons = prompt("Enter the number of gallons used:");
+       static volatile int mpg = miles / gallons;
+       output("Your mpg = " + mpg);
+}
+
+.data
+prompt_miles:   .asciiz "Enter the number of miles driven: "
+prompt_gallons: .asciiz "Enter the number of gallons used: "
+output_text:    .asciiz "Your mpg = "
+miles:          .word 0
+gallons:        .word 0
+mpg:            .word 0
+
+.text
+.globl main
+main:
+
+    
+    li $v0, 4              
+    la $a0, prompt_miles
+    syscall
+
+    li $v0, 5              
+    syscall
+    sw $v0, miles          
+
+   
+    li $v0, 4               
+    la $a0, prompt_gallons
+    syscall
+
+    li $v0, 5              
+    syscall
+    sw $v0, gallons         
+
+   
+    lw $t0, miles
+    lw $t1, gallons
+
+   
+    div $t0, $t1            
+    mflo $t2             
+    sw $t2, mpg            
+
+    
+    li $v0, 4               
+    la $a0, output_text
+    syscall
+
+    li $v0, 1               
+    lw $a0, mpg
+    syscall
+
+    
+    li $v0, 10              
+    syscall
+-------------------------------------------------------
+
 
 li $v0,4 #load service number for string print in $v0 
 la $a0, prompt_string # load address of string to be printed into $a0 
