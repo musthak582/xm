@@ -2269,6 +2269,94 @@ main:
     li $v0, 10              
     syscall
 -------------------------------------------------------
+Check if three sides form a right triangle
+.data
+prompt1: .asciiz "Enter side 1: "
+prompt2: .asciiz "Enter side 2: "
+prompt3: .asciiz "Enter side 3: "
+yesMsg:  .asciiz "It's a right triangle!\n"
+noMsg:   .asciiz "Not a right triangle.\n"
+
+.text
+.globl main
+main:
+    # --- Input side 1 ---
+    li $v0, 4
+    la $a0, prompt1
+    syscall
+    li $v0, 5
+    syscall
+    move $t0, $v0         # t0 = side1
+
+    # --- Input side 2 ---
+    li $v0, 4
+    la $a0, prompt2
+    syscall
+    li $v0, 5
+    syscall
+    move $t1, $v0         # t1 = side2
+
+    # --- Input side 3 ---
+    li $v0, 4
+    la $a0, prompt3
+    syscall
+    li $v0, 5
+    syscall
+    move $t2, $v0         # t2 = side3
+
+    # Compute squares
+    mul $t3, $t0, $t0     # t3 = side1^2
+    mul $t4, $t1, $t1     # t4 = side2^2
+    mul $t5, $t2, $t2     # t5 = side3^2
+
+    # Check all three combinations:
+    # 1) t3 == t4 + t5
+    add $t6, $t4, $t5
+    beq $t3, $t6, print_yes
+
+    # 2) t4 == t3 + t5
+    add $t6, $t3, $t5
+    beq $t4, $t6, print_yes
+
+    # 3) t5 == t3 + t4
+    add $t6, $t3, $t4
+    beq $t5, $t6, print_yes
+
+    j print_no
+
+print_yes:
+    li $v0, 4
+    la $a0, yesMsg
+    syscall
+    j exit
+
+print_no:
+    li $v0, 4
+    la $a0, noMsg
+    syscall
+
+exit:
+    li $v0, 10
+    syscall
+
+
+
+-------------------------------------------------------
+
+for (i = 0; i < 10; i++) {
+    a = a + b;
+}
+
+    li   $t0, 0         # i = 0
+loop:
+    bge  $t0, 10, end  # if i >= 10, jump to end
+    add  $s0, $s0, $s1 # a = a + b
+    addi $t0, $t0, 1   # i++
+    j    loop
+end:
+
+
+-------------------------------------------------------
 
 
 li $v0,4 #load service number for string print in $v0 
